@@ -2,11 +2,11 @@
 
 using namespace std;
 
-Piece::Piece(bool isWhite) : isWhite(isWhite) {}
+Piece::Piece(bool isWhite, char symbol) : isWhite(isWhite), symbol(symbol) {}
 
-Piece::Piece(const Piece &other) : isWhite(other.isWhite) {}
+Piece::Piece(const Piece &other) : isWhite(other.isWhite), symbol(other.symbol) {}
 
-bool Piece::isWithinBoard(pair<usint, usint> pos ) {
+bool Piece::isWithinBoard(std::pair<usint, usint> pos) {
     usint row = pos.first;
     usint col = pos.second;
 
