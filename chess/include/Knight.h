@@ -10,7 +10,7 @@ public:
 
     Knight(const Knight &other);
 
-    bool regularMovement(pair<usint, usint> from, pair<usint, usint> to) override;
+    bool regularMovement(Coordinates from, Coordinates to) override;
 
     virtual ~Knight() = default;
 };

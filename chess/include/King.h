@@ -11,7 +11,7 @@ public:
 
     King(const King &other);
 
-    bool regularMovement(pair<usint, usint> from, pair<usint, usint> to) override;
+    bool regularMovement(Coordinates from, Coordinates to) override;
 
     virtual ~King() = default;
 

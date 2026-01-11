@@ -17,7 +17,6 @@ public:
     Piece(bool isWhite, char symbol);
 
     Piece(const Piece &other);
-
     virtual bool isWithinBoard(Coordinates pos);
 
     virtual bool regularMovement(Coordinates from, Coordinates to) = 0;
