@@ -6,6 +6,7 @@
 #include <exception>
 
 typedef unsigned short int usint;
+typedef std::pair<usint, usint> Coordinates;
 
 class Piece {
 protected:
@@ -17,9 +18,9 @@ public:
 
     Piece(const Piece &other);
 
-    virtual bool isWithinBoard(pair<usint, usint> pos);
+    virtual bool isWithinBoard(Coordinates pos);
 
-    virtual bool regularMovement(pair<usint, usint> from, pair<usint, usint> to) = 0;
+    virtual bool regularMovement(Coordinates from, Coordinates to) = 0;
 
     virtual ~Piece() = default;
 };
