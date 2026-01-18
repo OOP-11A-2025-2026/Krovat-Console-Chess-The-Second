@@ -18,7 +18,8 @@
 
 class Board {
 private:
-    // Piece squares[8][8];
+    // 
+    Piece* squares[8][8];
     // Piece undoSquares[8][8];
     bool undoAvailable = false;
 
@@ -32,7 +33,7 @@ private:
     bool checkCastle(Coordinates from, Coordinates to);
     void castle(Coordinates from, Coordinates to);
     bool checkCollision(Coordinates from, Coordinates to);
-    Piece getPiece(Coordinates coords);
+    Piece* getPiece(Coordinates coords);
     void resetAllEnPassantEligibility();
     bool checkEnPassant(Coordinates from, Coordinates to);
     void enPassant(Coordinates from, Coordinates to);
