@@ -2,9 +2,9 @@
 
 using namespace std;
 
-King::King(bool isWhite, char symbol) : Piece::Piece(isWhite, isWhite ? 'K' : 'k') {}
+King::King(bool isWhite) : Piece::Piece(isWhite, isWhite ? 'K' : 'k') {}
 
-King::King(const King &other) : Piece::Piece(other) {}
+King::King(const King &other) : Piece::Piece(other), hasKingMoved(other.hasKingMoved) {}
 
 bool King::regularMovement(pair<usint, usint> from, pair<usint, usint> to) {
     usint fromFst = from.first;
@@ -23,10 +23,10 @@ bool King::regularMovement(pair<usint, usint> from, pair<usint, usint> to) {
     return false;
 }
 
-bool King::hasMoved() {
+bool King::getHasKingMoved() {
     return hasKingMoved;
 }
 
-void King::setHasMoved(bool moved) {
+void King::setHasKingMoved(bool moved) {
     hasKingMoved = moved;
 }

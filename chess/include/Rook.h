@@ -2,7 +2,7 @@
 #define ROOK_H
 
 class Rook : public Piece {
-    bool hasMoved;
+    bool hasRookMoved;
 
 public:
     Rook(bool isWhite);
@@ -11,7 +11,7 @@ public:
 
     bool regularMovement(Coordinates from, Coordinates to) override;
 
-    bool hasMoved();
+    bool hasRookMoved();
 
     void setHasMoved(bool moved);
 

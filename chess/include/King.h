@@ -4,7 +4,7 @@
 #include "Piece.h"
 
 class King : public Piece {
-    bool hasMoved;
+    bool hasKingMoved;
 
 public:
     // King(bool isWhite, char symbol);
@@ -16,9 +16,9 @@ public:
 
     virtual ~King() = default;
 
-    bool hasMoved();
+    bool getHasKingMoved();
 
-    void setHasMoved(bool moved);
+    void setHasKingMoved(bool moved);
 };
 
 #endif

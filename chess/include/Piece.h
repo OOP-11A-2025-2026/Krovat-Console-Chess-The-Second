@@ -4,6 +4,7 @@
 #include <iostream>
 #include <utility>
 #include <exception>
+#include <cmath>
 
 typedef unsigned short int usint;
 typedef std::pair<usint, usint> Coordinates;

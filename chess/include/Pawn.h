@@ -5,7 +5,7 @@
 
 class Pawn : public Piece {
 private:
-    bool hasMoved;
+    bool hasPawnMoved;
     bool enPassantEligible;
 
 public:
@@ -15,8 +15,8 @@ public:
     bool regularMovement(Coordinates from, Coordinates to) override;
     
     // Accessors
-    bool hasMoved() const { return hasMoved; }
-    void setHasMoved(bool moved) { hasMoved = moved; }
+    bool getHasPawnMoved() const { return hasPawnMoved; }
+    void setHasPawnMoved(bool moved) { hasPawnMoved = moved; }
     bool isEnPassantEligible() const { return enPassantEligible; }
     void setEnPassantEligible(bool eligible) { enPassantEligible = eligible; }
 
