@@ -21,7 +21,7 @@ void Board::checkPin(Coordinates from, Coordinates to) {
     squares[to.first][to.second] = movingPiece;
     squares[from.first][from.second] = nullptr;
 
-    bool inCheck = checkCheck(movingPiece->isWhite);
+    bool inCheck = checkCheck(movingPiece->getIsWhite());
 
     // Undo the move
     squares[from.first][from.second] = movingPiece;
@@ -39,7 +39,7 @@ void Board::enPassant(Coordinates from, Coordinates to) {
     squares[to.first][to.second] = p1;
     squares[from.first][from.second] = nullptr;
     
-    static_cast<Pawn*>(p1)->setHasMoved(true);
+    static_cast<Pawn*>(p1)->setHasPawnMoved(true);
     resetAllEnPassantEligibility();
 }
 
@@ -47,7 +47,7 @@ void Board::promotion(Coordinates coords, char choice) {
     Pawn* p = dynamic_cast<Pawn*>(getPiece(coords));
     if (!p) return;
 
-    bool w = p->isWhite;
+    bool w = p->getIsWhite();
     Piece* n = nullptr;
 
     switch (toupper(choice)) {
@@ -66,7 +66,7 @@ bool Board::checkEnPassant(Coordinates from, Coordinates to) {
     Pawn* p1 = dynamic_cast<Pawn*>(getPiece(from));
     if (!p1) return false;
 
-    int direction = p1->isWhite ? -1 : 1;
+    int direction = p1->getIsWhite() ? -1 : 1;
     
     // 1. Must move diagonally one square
     if ((int)to.first - (int)from.first != direction || 
@@ -82,7 +82,7 @@ bool Board::checkEnPassant(Coordinates from, Coordinates to) {
     Pawn* p2 = dynamic_cast<Pawn*>(getPiece(enemyCoords));
 
     // 4. Enemy must be a Pawn, opposite color, and eligible
-    if (p2 && p2->isWhite != p1->isWhite && p2->isEnPassantEligible()) {
+    if (p2 && p2->getIsWhite() != p1->getIsWhite() && p2->isEnPassantEligible()) {
         return true;
     }
     return false;

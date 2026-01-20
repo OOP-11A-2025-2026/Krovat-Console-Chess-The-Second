@@ -6,7 +6,7 @@ Knight::Knight(bool isWhite) : Piece::Piece(isWhite, isWhite ? 'N' : 'n') {}
 
 Knight::Knight(const Knight &other) : Piece::Piece(other) {}
 
-bool Knight::regularMovement(pair<usint, usint> from, pair<usint, usint> to) {
+bool Knight::regularMovement(Coordinates from, Coordinates to) {
     usint fromFst = from.first;
     usint fromSnd = from.second;
     usint toFst = to.first;

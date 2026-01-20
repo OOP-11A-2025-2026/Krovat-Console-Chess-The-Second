@@ -6,7 +6,7 @@ Piece::Piece(bool isWhite, char symbol) : isWhite(isWhite), symbol(symbol) {}
 
 Piece::Piece(const Piece &other) : isWhite(other.isWhite), symbol(other.symbol) {}
 
-bool Piece::isWithinBoard(std::pair<usint, usint> pos) {
+bool Piece::isWithinBoard(Coordinates pos) {
     usint row = pos.first;
     usint col = pos.second;
 

@@ -6,7 +6,7 @@ King::King(bool isWhite) : Piece::Piece(isWhite, isWhite ? 'K' : 'k') {}
 
 King::King(const King &other) : Piece::Piece(other), hasKingMoved(other.hasKingMoved) {}
 
-bool King::regularMovement(pair<usint, usint> from, pair<usint, usint> to) {
+bool King::regularMovement(Coordinates from, Coordinates to) {
     usint fromFst = from.first;
     usint fromSnd = from.second;
     usint toFst = to.first;

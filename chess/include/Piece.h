@@ -23,6 +23,10 @@ public:
     virtual bool regularMovement(Coordinates from, Coordinates to) = 0;
 
     virtual ~Piece() = default;
+
+    bool getIsWhite() {
+        return this->isWhite;
+    }
 };
 
 #endif
