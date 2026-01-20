@@ -5,6 +5,7 @@
 
 class Game {
 private:
+    // add equivalent to moves array - please do not remove this comment if you don't replese it with the needed code, so we don't forget about it
     char promotionChoice = ' ';
     Board board;
     std::string gameResult = "*";

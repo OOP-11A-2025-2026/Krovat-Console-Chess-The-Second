@@ -27,6 +27,8 @@ public:
     bool getIsWhite() {
         return this->isWhite;
     }
+
+    virtual Piece* copy() const = 0;
 };
 
 #endif

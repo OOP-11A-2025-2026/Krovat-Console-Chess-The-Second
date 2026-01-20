@@ -18,6 +18,8 @@ public:
     bool getHasKingMoved();
 
     void setHasKingMoved(bool moved);
+
+    Piece* copy() const override;
 };
 
 #endif

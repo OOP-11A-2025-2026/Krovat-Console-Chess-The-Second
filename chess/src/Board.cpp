@@ -1,5 +1,7 @@
 #include "../include/Board.h"
 
+
+
 Piece* Board::getPiece(Coordinates coords) {
     return squares[coords.first][coords.second];
 }

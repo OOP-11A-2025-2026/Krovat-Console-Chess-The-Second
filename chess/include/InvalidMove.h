@@ -4,11 +4,9 @@
 #include <stdexcept>
 #include <string>
 
-using namespace std;
-
-class InvalidMove : public runtime_error {
+class InvalidMove : public std::runtime_error {
 public:
-    InvalidMove(const string &message) : runtime_error(message) {}
+    InvalidMove(const std::string &message) : std::runtime_error(message) {}
 };
 
 #endif

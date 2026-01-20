@@ -13,6 +13,8 @@ public:
     bool regularMovement(Coordinates from, Coordinates to) override;
 
     virtual ~Knight() = default;
+
+    Piece* copy() const override;
 };
 
 #endif

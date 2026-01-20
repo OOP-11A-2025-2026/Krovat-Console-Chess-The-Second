@@ -18,6 +18,8 @@ public:
     void setHasMoved(bool moved);
 
     virtual ~Rook() = default;
+
+    Piece* copy() const override;
 };
 
 #endif

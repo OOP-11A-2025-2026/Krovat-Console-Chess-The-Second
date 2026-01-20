@@ -12,6 +12,8 @@ public:
     bool regularMovement(Coordinates from, Coordinates to) override;
 
     virtual ~Bishop() = default;
+
+    Piece* copy() const override;
 };
 
 #endif

@@ -6,6 +6,10 @@ King::King(bool isWhite) : Piece::Piece(isWhite, isWhite ? 'K' : 'k') {}
 
 King::King(const King &other) : Piece::Piece(other), hasKingMoved(other.hasKingMoved) {}
 
+Piece* King::copy() const {
+    return new King(*this);
+}
+
 bool King::regularMovement(Coordinates from, Coordinates to) {
     usint fromFst = from.first;
     usint fromSnd = from.second;

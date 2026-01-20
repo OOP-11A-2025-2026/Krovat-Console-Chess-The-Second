@@ -1,8 +1,10 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+// Exceptions
 #include "InvalidMove.h"
 
+// Pieces
 #include "Piece.h"
 #include "Bishop.h"
 #include "King.h"
@@ -11,33 +13,41 @@
 #include "Queen.h"
 #include "Rook.h"
 
+// Other
 #include <string>
 
 class Board {
 private:
-    Piece* squares[8][8];
-    // Piece undoSquares[8][8];
+    Piece* squares[8][8] = {};
+    Piece* undoSquares[8][8] = {};
+
     bool undoAvailable = false;
 
     int knightMoves[8][2] = {
-            { 2, 1}, { 2,-1}, {-2, 1}, {-2,-1},
-            { 1, 2}, { 1,-2}, {-1, 2}, {-1,-2}
+        { 2, 1}, { 2,-1}, {-2, 1}, {-2,-1},
+        { 1, 2}, { 1,-2}, {-1, 2}, {-1,-2}
     };
-
+    
     void saveUndoState();
     Coordinates getKingCoordinates(bool isKingWhite);
     bool checkCastle(Coordinates from, Coordinates to);
     void castle(Coordinates from, Coordinates to);
     bool checkCollision(Coordinates from, Coordinates to);
-    Piece* getPiece(Coordinates coords);
-    void resetAllEnPassantEligibility();
-    bool checkEnPassant(Coordinates from, Coordinates to);
-    void enPassant(Coordinates from, Coordinates to);
-    void promotion(Coordinates coords, char promotionChoice);
-    void checkPin(Coordinates from, Coordinates to);
+    Piece* getPiece(Coordinates coords); // done, untested
+    void resetAllEnPassantEligibility(); // done, untested
+    bool checkEnPassant(Coordinates from, Coordinates to); // done, untested
+    void enPassant(Coordinates from, Coordinates to); // done, untested
+    void promotion(Coordinates coords, char promotionChoice); // done, untested
+    void checkPin(Coordinates from, Coordinates to); // done, untested
 
 public:
+    // To stop accsidental shadow copying
+    Board(const Board &other) = delete;
+    Board& operator=(const Board &other) = delete;
+
     Board();
+    ~Board();
+    
     void undoMove();
     bool checkCheck(bool isKingWhite);
     bool hasValidMoves(bool isKingWhite);
@@ -45,8 +55,7 @@ public:
     bool checkStalemate(bool isKingWhite);
     int makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);
     std::string toString();
-    bool isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);
-
+    bool isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);    
 };
 
 #endif

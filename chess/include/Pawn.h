@@ -21,6 +21,8 @@ public:
     void setEnPassantEligible(bool eligible) { enPassantEligible = eligible; }
 
     virtual ~Pawn() = default;
+
+    Piece* copy() const override;
 };
 
 #endif
