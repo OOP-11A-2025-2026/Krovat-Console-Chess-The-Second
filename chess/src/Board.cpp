@@ -1,9 +1,264 @@
 #include "../include/Board.h"
 
+// Default constructor to initialize the chess board with pieces in starting positions
+// Above is black in lowercase letters, below is white in uppercase letters
+Board::Board() {
+    // Initialize an empty board
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 8; j++) {
+            squares[i][j] = nullptr;
+            undoSquares[i][j] = nullptr;
+        }
+    }
 
+    // Pawns
+    for (int j = 0; j < 8; j++) {
+        squares[1][j] = new Pawn(false);
+        squares[6][j] = new Pawn(true);
+    }
+
+    // Rooks
+    squares[0][0] = new Rook(false);
+    squares[0][7] = new Rook(false);
+    squares[7][0] = new Rook(true);
+    squares[7][7] = new Rook(true);
+
+    // Knights
+    squares[0][1] = new Knight(false);
+    squares[0][6] = new Knight(false);
+    squares[7][1] = new Knight(true);
+    squares[7][6] = new Knight(true);
+
+    // Bishops
+    squares[0][2] = new Bishop(false);
+    squares[0][5] = new Bishop(false);
+    squares[7][2] = new Bishop(true);
+    squares[7][5] = new Bishop(true);
+
+    // Queens
+    squares[0][3] = new Queen(false);
+    squares[7][3] = new Queen(true);
+
+    // Kings
+    squares[0][4] = new King(false);
+    squares[7][4] = new King(true);
+}
+
+// Destructor to clean up dynamically allocated pieces
+Board::~Board() {
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++) {
+            delete squares[i][j];
+            delete undoSquares[i][j];
+        }
+}
+
+// Save the current board state for undo functionality
+void Board::saveUndoState() {
+    for (int i = 0; i < 8; i++) 
+    {
+        for (int j = 0; j < 8; j++) 
+        {
+            delete undoSquares[i][j]; // Clean up previous undo state
+            if (squares[i][j] != nullptr) 
+                undoSquares[i][j] = squares[i][j]->copy();
+            else
+                undoSquares[i][j] = nullptr;
+        }
+    }
+    undoAvailable = true;
+}
+
+// Undo the last move by restoring the previous board state
+void Board::undoMove() {
+    if (!undoAvailable)
+        throw InvalidMove("No move to undo");
+
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++) 
+        {
+            delete squares[i][j]; // Clean up current board state
+            squares[i][j] = undoSquares[i][j];
+            undoSquares[i][j] = nullptr;
+        }
+    }
+
+    undoAvailable = false;
+}
+
+// Get the coordinates of the king of the specified color
+Coordinates Board::getKingCoordinates(bool isKingWhite) {
+    for (int i = 0; i < 8; i++)
+    {
+        for (int j = 0; j < 8; j++)
+        {
+            if (squares[i][j] != nullptr) 
+            {
+                King* k = dynamic_cast<King*>(squares[i][j]);
+                if (k && k->getIsWhite() == isKingWhite) return Coordinates(i, j);
+            }
+        }
+    }
+    throw InvalidMove("King not found");
+}
 
 Piece* Board::getPiece(Coordinates coords) {
     return squares[coords.first][coords.second];
+}
+
+// Check if the king of the specified color is in check
+bool Board::checkCheck(bool isKingWhite) {
+    bool opponentIsWhite = !isKingWhite;
+    
+    Coordinates king = getKingCoordinates(isKingWhite);
+    
+    Piece* piece;
+    int row = king.first, col = king.second;
+    
+    // Checking down - Queens and Rooks
+    for (int i = row + 1; i < 8; i++) 
+    {
+        piece = squares[i][col];
+        if (!piece) continue;
+
+        if (piece->getIsWhite() == opponentIsWhite && (dynamic_cast<Rook*>(piece) || dynamic_cast<Queen*>(piece)))
+            return true;
+        break;
+    }
+
+    // Checking up - Queens and Rooks
+    for (int i = row - 1; i >= 0; i--) 
+    {
+        piece = squares[i][col];
+        if (!piece) continue;
+
+        if (piece->getIsWhite() == opponentIsWhite && (dynamic_cast<Rook*>(piece) || dynamic_cast<Queen*>(piece)))
+            return true;
+        break;
+    }
+
+    // Checking right - Queens and Rooks
+    for (int i = col + 1; i < 8; i++) 
+    {
+        piece = squares[row][i];
+        if (!piece) continue;
+
+        if (piece->getIsWhite() == opponentIsWhite && (dynamic_cast<Rook*>(piece) || dynamic_cast<Queen*>(piece)))
+            return true;
+        break;
+    }
+
+    // Checking left - Queens and Rooks
+    for (int i = col - 1; i >= 0; i--) 
+    {
+        piece = squares[row][i];
+        if (!piece) continue;
+
+        if (piece->getIsWhite() == opponentIsWhite && (dynamic_cast<Rook*>(piece) || dynamic_cast<Queen*>(piece)))
+            return true;
+        break;
+    }
+
+    // Checking down right diagonal - Queens and Bishops
+    for (int i = 1; row + i < 8 && col + i < 8; i++) 
+    {
+        piece = squares[row + i][col + i];
+        if (!piece) continue;
+
+        if (piece->getIsWhite() == opponentIsWhite && (dynamic_cast<Bishop*>(piece) || dynamic_cast<Queen*>(piece)))
+            return true;
+        break;
+    }
+
+    // Checking down left diagonal - Queens and Bishops
+    for (int i = 1; row + i < 8 && col - i >= 0; i++) 
+    {
+        piece = squares[row + i][col - i];
+        if (!piece) continue;
+
+        if (piece->getIsWhite() == opponentIsWhite && (dynamic_cast<Bishop*>(piece) || dynamic_cast<Queen*>(piece)))
+            return true;
+        break;
+    }
+
+    // Checking up right diagonal - Queens and Bishops
+    for (int i = 1; row - i >= 0 && col + i < 8; i++) 
+    {
+        piece = squares[row - i][col + i];
+        if (!piece) continue;
+
+        if (piece->getIsWhite() == opponentIsWhite && (dynamic_cast<Bishop*>(piece) || dynamic_cast<Queen*>(piece)))
+            return true;
+        break;
+    }
+
+    // Checking up left diagonal - Queens and Bishops
+    for (int i = 1; row - i >= 0 && col - i >= 0; i++) 
+    {
+        piece = squares[row - i][col - i];
+        if (!piece) continue;
+
+        if (piece->getIsWhite() == opponentIsWhite && (dynamic_cast<Bishop*>(piece) || dynamic_cast<Queen*>(piece)))
+            return true;
+        break;
+    }
+
+    // Knights
+    for (auto& knightMove : knightMoves) 
+    {
+        int nrow = row + knightMove[0], ncol = col + knightMove[1];
+        
+        if (nrow < 0 || nrow >= 8 || ncol < 0 || ncol >= 8) continue;
+        
+        piece = squares[nrow][ncol];
+        if (piece && dynamic_cast<Knight*>(piece) && piece->getIsWhite() == opponentIsWhite)
+            return true;
+    }
+
+    // Pawn checks
+    int opponentPawnDirection = isKingWhite ? -1 : 1; // Black pawns move down (small index), white pawns move up (big index)
+    int prow = row + opponentPawnDirection;
+    if (prow >= 0 && prow < 8) 
+    {
+        
+        int pLeftCol = col - 1;
+        int pRightCol = col + 1;
+        
+        if (pLeftCol >= 0) 
+        {
+            piece = squares[prow][pLeftCol];
+            if (piece && dynamic_cast<Pawn*>(piece) && piece->getIsWhite() == opponentIsWhite)
+                return true;
+        }
+
+        if(pRightCol < 8) 
+        {
+            piece = squares[prow][pRightCol];
+            if (piece && dynamic_cast<Pawn*>(piece) && piece->getIsWhite() == opponentIsWhite)
+                return true;
+        }
+    }
+
+    // Enemy king adjacency check
+    for (int dr = -1; dr <= 1; dr++) 
+    {
+        for (int dc = -1; dc <= 1; dc++) 
+        {
+            if (dr == 0 && dc == 0) continue;
+
+            int krow = row + dr;
+            int kcol = col + dc;
+
+            if (krow < 0 || krow >= 8 || kcol < 0 || kcol >= 8) continue;
+
+            piece = squares[krow][kcol];
+            if (piece && dynamic_cast<King*>(piece) && piece->getIsWhite() != isKingWhite)
+                return true;
+        }
+    }
+
+    return false;
 }
 
 void Board::resetAllEnPassantEligibility() {

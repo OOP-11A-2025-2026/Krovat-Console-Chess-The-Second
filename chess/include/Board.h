@@ -18,8 +18,8 @@
 
 class Board {
 private:
-    Piece* squares[8][8] = {};
-    Piece* undoSquares[8][8] = {};
+    Piece* squares[8][8] = {nullptr};
+    Piece* undoSquares[8][8] = {nullptr};
 
     bool undoAvailable = false;
 
@@ -28,8 +28,8 @@ private:
         { 1, 2}, { 1,-2}, {-1, 2}, {-1,-2}
     };
     
-    void saveUndoState();
-    Coordinates getKingCoordinates(bool isKingWhite);
+    void saveUndoState(); // done, untested
+    Coordinates getKingCoordinates(bool isKingWhite); // done, untested
     bool checkCastle(Coordinates from, Coordinates to);
     void castle(Coordinates from, Coordinates to);
     bool checkCollision(Coordinates from, Coordinates to);
@@ -45,11 +45,11 @@ public:
     Board(const Board &other) = delete;
     Board& operator=(const Board &other) = delete;
 
-    Board();
-    ~Board();
+    Board(); // done, untested
+    ~Board(); // done, untested
     
-    void undoMove();
-    bool checkCheck(bool isKingWhite);
+    void undoMove(); // done, untested
+    bool checkCheck(bool isKingWhite); // done, untested
     bool hasValidMoves(bool isKingWhite);
     bool checkMate(bool isKingWhite);
     bool checkStalemate(bool isKingWhite);
