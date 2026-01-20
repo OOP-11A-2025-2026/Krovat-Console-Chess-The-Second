@@ -304,6 +304,7 @@ bool Board::checkCollision(Coordinates from, Coordinates to) {
     return false;
 }
 
+// Convert the board state to a string representation
 std::string Board::toString() {
     std::ostringstream out;
     out << "  | a b c d e f g h\n";
