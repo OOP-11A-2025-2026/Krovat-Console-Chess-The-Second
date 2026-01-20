@@ -15,6 +15,7 @@
 
 // Other
 #include <string>
+#include <sstream>
 
 class Board {
 private:

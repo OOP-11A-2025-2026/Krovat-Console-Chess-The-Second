@@ -261,6 +261,69 @@ bool Board::checkCheck(bool isKingWhite) {
     return false;
 }
 
+// This function checks if there are any pieces between 2 sets of coordinates
+// It does not count as a collision if there is a piece on the given sets of coordinates
+bool Board::checkCollision(Coordinates from, Coordinates to) {
+    int frow = from.first, fcol = from.second;
+    int trow = to.first, tcol = to.second;
+
+    // Row (up and/or down) collision
+    if (frow == trow) 
+    {
+        for (int i = std::min(fcol, tcol) + 1; i < std::max(fcol, tcol); i++)
+            if (squares[frow][i]) return true;
+    } 
+    
+    // Column (left and/or right) collision
+    else if (fcol == tcol) 
+    {
+        for (int i = std::min(frow, trow) + 1; i < std::max(frow, trow); i++)
+            if (squares[i][fcol]) return true;
+    } 
+    
+    // Diagonal collision
+    else if (std::abs(frow - trow) == std::abs(fcol - tcol))
+    {
+        int rowStep = (trow > frow) ? 1 : -1;
+        int colStep = (tcol > fcol) ? 1 : -1;
+        
+        int r = frow + rowStep;
+        int c = fcol + colStep;
+
+        while (r != trow && c != tcol) {
+            if (squares[r][c]) return true;
+            r += rowStep;
+            c += colStep;
+        }
+    } 
+    
+    else {
+        throw InvalidMove("Coordinates have to be in a straight or diagonal line");
+    }
+
+    return false;
+}
+
+std::string Board::toString() {
+    std::ostringstream out;
+    out << "  | a b c d e f g h\n";
+    out << "--+----------------\n";
+
+    for (int i = 0; i < 8; i++) 
+    {
+        out << 8 - i << " | ";
+        for (int j = 0; j < 8; j++) 
+        {
+            if (!squares[i][j]) 
+                out << ((i % 2 == j % 2) ? "* " : ". ");
+            else
+                out << squares[i][j]->getSymbol() << ' ';
+        }
+        out << '\n';
+    }
+    return out.str();
+}
+
 void Board::resetAllEnPassantEligibility() {
     for (int i = 0; i < 8; i++) {
         for (int j = 0; j < 8; j++) {
