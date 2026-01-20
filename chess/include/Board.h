@@ -1,10 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
-// Exceptions
 #include "InvalidMove.h"
 
-// Piece classes
 #include "Piece.h"
 #include "Bishop.h"
 #include "King.h"
@@ -13,12 +11,10 @@
 #include "Queen.h"
 #include "Rook.h"
 
-// Other libaries
 #include <string>
 
 class Board {
 private:
-    // 
     Piece* squares[8][8];
     // Piece undoSquares[8][8];
     bool undoAvailable = false;

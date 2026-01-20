@@ -7,8 +7,7 @@ class King : public Piece {
     bool hasKingMoved;
 
 public:
-    // King(bool isWhite, char symbol);
-    King(bool isWhite); // The symbol is assigned by default
+    King(bool isWhite);
 
     King(const King &other);
 

@@ -8,7 +8,7 @@ using namespace std;
 
 class InvalidMove : public runtime_error {
 public:
-    InvalidMove(const string& message) : runtime_error(message) {}
+    InvalidMove(const string &message) : runtime_error(message) {}
 };
 
 #endif

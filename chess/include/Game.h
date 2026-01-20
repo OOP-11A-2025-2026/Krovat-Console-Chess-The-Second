@@ -5,13 +5,12 @@
 
 class Game {
 private:
-    // add equivalent to moves array
     char promotionChoice = ' ';
     Board board;
     std::string gameResult = "*";
     
     Coordinates parseSquare(char file, char rank);
-    bool matchesPiece(Piece p, char c);
+    bool matchesPiece(Piece& p, char c);
 
 public:
     Game();
