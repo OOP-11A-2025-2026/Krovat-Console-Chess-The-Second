@@ -15,7 +15,7 @@ public:
 
     bool getHasRookMoved();
 
-    void setHasMoved(bool moved);
+    void setHasRookMoved(bool moved);
 
     virtual ~Rook() = default;
 

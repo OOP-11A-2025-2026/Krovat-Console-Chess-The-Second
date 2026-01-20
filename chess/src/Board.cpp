@@ -103,7 +103,14 @@ Coordinates Board::getKingCoordinates(bool isKingWhite) {
     throw InvalidMove("King not found");
 }
 
+// Verify that the given coordinates are within the bounds of the board
+void verifyCoordinates(Coordinates coords) {
+    if (coords.first < 0 || coords.first >= 8 || coords.second < 0 || coords.second >= 8)
+        throw InvalidMove("Coordinates out of bounds");
+}
+
 Piece* Board::getPiece(Coordinates coords) {
+    verifyCoordinates(coords);
     return squares[coords.first][coords.second];
 }
 
@@ -264,6 +271,9 @@ bool Board::checkCheck(bool isKingWhite) {
 // This function checks if there are any pieces between 2 sets of coordinates
 // It does not count as a collision if there is a piece on the given sets of coordinates
 bool Board::checkCollision(Coordinates from, Coordinates to) {
+    verifyCoordinates(from);
+    verifyCoordinates(to);
+    
     int frow = from.first, fcol = from.second;
     int trow = to.first, tcol = to.second;
 
@@ -335,6 +345,9 @@ void Board::resetAllEnPassantEligibility() {
 }
 
 void Board::checkPin(Coordinates from, Coordinates to) {
+    verifyCoordinates(from);
+    verifyCoordinates(to);
+    
     Piece* movingPiece = getPiece(from);
     Piece* capturedPiece = getPiece(to);
 
@@ -352,6 +365,9 @@ void Board::checkPin(Coordinates from, Coordinates to) {
 }
 
 void Board::enPassant(Coordinates from, Coordinates to) {
+    verifyCoordinates(from);
+    verifyCoordinates(to);
+    
     Piece* p1 = getPiece(from);
     
     delete squares[from.first][to.second]; 
@@ -365,6 +381,8 @@ void Board::enPassant(Coordinates from, Coordinates to) {
 }
 
 void Board::promotion(Coordinates coords, char choice) {
+    verifyCoordinates(coords);
+
     Pawn* p = dynamic_cast<Pawn*>(getPiece(coords));
     if (!p) return;
 
@@ -384,6 +402,9 @@ void Board::promotion(Coordinates coords, char choice) {
 }
 
 bool Board::checkEnPassant(Coordinates from, Coordinates to) {
+    verifyCoordinates(from);
+    verifyCoordinates(to);
+
     Pawn* p1 = dynamic_cast<Pawn*>(getPiece(from));
     if (!p1) return false;
 
@@ -407,4 +428,129 @@ bool Board::checkEnPassant(Coordinates from, Coordinates to) {
         return true;
     }
     return false;
+}
+
+int Board::makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice) {
+    verifyCoordinates(from);
+    verifyCoordinates(to);
+
+    Piece* moving = getPiece(from);
+    if (!moving)
+        throw InvalidMove("No piece on starting square");
+
+    // Turn validation
+    if (moving->getIsWhite() != isWhiteTurn)
+        throw InvalidMove("Not your turn");
+
+    // Correct color capture validation
+    Piece* target = getPiece(to);
+    if (target && target->getIsWhite() == isWhiteTurn)
+        throw InvalidMove("Cannot capture your own piece");
+
+    // Castling
+    if (dynamic_cast<King*>(moving)) 
+    {
+        if (checkCastle(from, to)) 
+        {
+            saveUndoState();
+            castle(from, to);
+            return 0;
+        }
+    }
+
+    // En Passant
+    if (dynamic_cast<Pawn*>(moving)) 
+    {
+        if (checkEnPassant(from, to)) 
+        {
+            saveUndoState();
+            enPassant(from, to);
+            resetAllEnPassantEligibility();
+            return 0;
+        }
+    }
+
+    // Regular movement check
+    if (!moving->regularMovement(from, to))
+        throw InvalidMove("Illegal movement");
+
+    // Pawn movement and capture extra checks
+    if (dynamic_cast<Pawn*>(moving)) 
+    {
+        int colDiff = std::abs(to.second - from.second);
+
+        if (colDiff == 1 && !target)
+            throw InvalidMove("Pawn diagonal move requires capture");
+
+        if (colDiff == 0 && target)
+            throw InvalidMove("Pawn cannot capture forward");
+    }
+
+    // Collision check (except knight)
+    if (!dynamic_cast<Knight*>(moving) && checkCollision(from, to))
+        throw InvalidMove("Path blocked");
+
+    // Pin / king safety check
+    checkPin(from, to);
+
+    saveUndoState();
+
+    // Move the piece
+    squares[to.first][to.second] = moving;
+    squares[from.first][from.second] = nullptr;
+
+    // Update movement flags
+    if (Rook* rook = dynamic_cast<Rook*>(moving)) {
+        rook->setHasRookMoved(true);
+    }
+    else if (Pawn* pawn = dynamic_cast<Pawn*>(moving)) {
+        pawn->setHasPawnMoved(true);
+    }
+    else if (King* king = dynamic_cast<King*>(moving)) {
+        king->setHasKingMoved(true);
+    }
+
+    // En Passant and Promotion
+    resetAllEnPassantEligibility();
+
+    if (Pawn* pawn = dynamic_cast<Pawn*>(moving)) {
+
+        int startRow = pawn->getIsWhite() ? 6 : 1;
+        int diff = std::abs(from.first - to.first);
+
+        if (from.first == startRow && diff == 2) {
+            pawn->setEnPassantEligible(true);
+        }
+
+        promotion(to, promotionChoice);
+    }
+
+    // Endgame checks
+    bool opponentIsWhite = !moving->getIsWhite();
+
+    if (checkMate(opponentIsWhite)) {
+        return 1;   // checkmate
+    }
+    else if (checkStalemate(opponentIsWhite)) {
+        return 2;   // stalemate
+    }
+    else if (checkCheck(opponentIsWhite)) {
+        return 3;   // check
+    }
+
+    return 0; // normal move
+}
+
+bool Board::isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice) {
+    verifyCoordinates(from);
+    verifyCoordinates(to);
+    
+    try {
+        makeMove(from, to, isWhiteTurn, promotionChoice);
+        undoMove();
+        return true;
+    } catch (const InvalidMove&) {
+        if(undoAvailable) undoMove();
+        return false;
+    }
 }

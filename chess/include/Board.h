@@ -33,7 +33,7 @@ private:
     Coordinates getKingCoordinates(bool isKingWhite); // done, untested
     bool checkCastle(Coordinates from, Coordinates to);
     void castle(Coordinates from, Coordinates to);
-    bool checkCollision(Coordinates from, Coordinates to);
+    bool checkCollision(Coordinates from, Coordinates to); // done, untested
     Piece* getPiece(Coordinates coords); // done, untested
     void resetAllEnPassantEligibility(); // done, untested
     bool checkEnPassant(Coordinates from, Coordinates to); // done, untested
@@ -55,7 +55,7 @@ public:
     bool checkMate(bool isKingWhite);
     bool checkStalemate(bool isKingWhite);
     int makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);
-    std::string toString();
+    std::string toString(); // done, untested
     bool isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);    
 };
 
