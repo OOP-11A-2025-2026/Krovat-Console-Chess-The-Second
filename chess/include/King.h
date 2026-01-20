@@ -4,10 +4,11 @@
 #include "Piece.h"
 
 class King : public Piece {
-    bool hasKingMoved;
+    bool hasMoved;
 
 public:
-    King(bool isWhite, char symbol);
+    // King(bool isWhite, char symbol);
+    King(bool isWhite); // The symbol is assigned by default
 
     King(const King &other);
 
