@@ -10,5 +10,5 @@ bool Piece::isWithinBoard(Coordinates pos) {
     usint row = pos.first;
     usint col = pos.second;
 
-    return (row > 0 && row < 8 && col > 0 && col < 8);
+    return (row >= 0 && row < 8 && col >= 0 && col < 8);
 }

@@ -27,6 +27,12 @@ public:
     bool getIsWhite() {
         return this->isWhite;
     }
+
+    char getSymbol() {
+        return this->symbol;
+    }
+
+    virtual Piece* copy() const = 0;
 };
 
 #endif

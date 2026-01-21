@@ -13,11 +13,13 @@ public:
 
     bool regularMovement(Coordinates from, Coordinates to) override;
 
-    bool hasRookMoved();
+    bool getHasRookMoved();
 
-    void setHasMoved(bool moved);
+    void setHasRookMoved(bool moved);
 
     virtual ~Rook() = default;
+
+    Piece* copy() const override;
 };
 
 #endif

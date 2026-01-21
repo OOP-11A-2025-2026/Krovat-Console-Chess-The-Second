@@ -6,6 +6,10 @@ Knight::Knight(bool isWhite) : Piece::Piece(isWhite, isWhite ? 'N' : 'n') {}
 
 Knight::Knight(const Knight &other) : Piece::Piece(other) {}
 
+Piece* Knight::copy() const {
+    return new Knight(*this);
+}
+
 bool Knight::regularMovement(Coordinates from, Coordinates to) {
     usint fromFst = from.first;
     usint fromSnd = from.second;

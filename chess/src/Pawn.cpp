@@ -7,8 +7,12 @@ Pawn::Pawn(bool isWhite)
 Pawn::Pawn(const Pawn &other) 
     : Piece(other), hasPawnMoved(other.hasPawnMoved), enPassantEligible(other.enPassantEligible) {}
 
+Piece* Pawn::copy() const {
+    return new Pawn(*this);
+}
+
 bool Pawn::regularMovement(Coordinates from, Coordinates to) {
-    int direction = isWhite ? -1 : 1;
+    int direction = isWhite ? -1 : 1; // White moves up (lower index), Black moves down (higher index)
     int rowDiff = (int)to.first - (int)from.first;
     int colDiff = (int)to.second - (int)from.second;
 

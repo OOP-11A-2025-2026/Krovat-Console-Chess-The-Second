@@ -6,6 +6,10 @@ Bishop::Bishop(bool isWhite) : Piece::Piece(isWhite, isWhite ? 'B' : 'b') {}
 
 Bishop::Bishop(const Bishop &other) : Piece::Piece(other) {}
 
+Piece* Bishop::copy() const {
+    return new Bishop(*this);
+}
+
 bool Bishop::regularMovement(Coordinates from, Coordinates to) {
     usint fromFst = from.first;
     usint fromSnd = from.second;

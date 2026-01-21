@@ -12,6 +12,8 @@ public:
     bool regularMovement(Coordinates from, Coordinates to) override;
 
     virtual ~Queen() = default;
+
+    Piece* copy() const override;
 };
 
 #endif
