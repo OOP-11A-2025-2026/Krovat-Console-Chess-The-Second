@@ -619,3 +619,70 @@ bool Board::checkStalemate(bool isKingWhite) {
 bool Board::checkMate(bool isKingWhite) {
     return (!hasValidMoves(isKingWhite) && checkCheck(isKingWhite));
 }
+
+
+bool Board::checkCastle(Coordinates from, Coordinates to) {
+    King* king = dynamic_cast<King*>(getPiece(from));
+    if (!king) return false;
+
+    if (king->getHasKingMoved()) return false;
+
+    int row = from.first;
+    int diff = (int)to.second - (int)from.second;
+
+    if (std::abs(diff) != 2) return false;
+
+    if (checkCheck(king->getIsWhite()))
+        throw InvalidMove("King in check");
+
+    int rookCol = diff > 0 ? 7 : 0;
+    int step = diff > 0 ? 1 : -1;
+
+    Rook* rook = dynamic_cast<Rook*>(squares[row][rookCol]);
+    if (!rook || rook->getHasRookMoved())
+        throw InvalidMove("Invalid rook");
+
+    for (int c = from.second + step; c != rookCol; c += step) {
+        if (squares[row][c] != nullptr)
+            throw InvalidMove("Piece between king and rook");
+    }
+
+    for (int i = 1; i <= 2; i++) {
+        Coordinates temp = { (usint)row, (usint)(from.second + step * i) };
+        Piece* saved = squares[row][temp.second];
+
+        squares[row][temp.second] = king;
+        squares[from.first][from.second] = nullptr;
+
+        bool inCheck = checkCheck(king->getIsWhite());
+
+        squares[from.first][from.second] = king;
+        squares[row][temp.second] = saved;
+
+        if (inCheck)
+            throw InvalidMove("Castling through check");
+    }
+
+    return true;
+}
+
+void Board::castle(Coordinates from, Coordinates to) {
+    King* king = static_cast<King*>(getPiece(from));
+
+    int row = from.first;
+    int diff = (int)to.second - (int)from.second;
+
+    int rookFrom = diff > 0 ? 7 : 0;
+    int rookTo = diff > 0 ? to.second - 1 : to.second + 1;
+
+    Rook* rook = static_cast<Rook*>(squares[row][rookFrom]);
+
+    squares[row][to.second] = king;
+    squares[from.first][from.second] = nullptr;
+
+    squares[row][rookTo] = rook;
+    squares[row][rookFrom] = nullptr;
+
+    king->setHasKingMoved(true);
+    rook->setHasRookMoved(true);
+}
