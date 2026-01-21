@@ -554,3 +554,4 @@ bool Board::isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char
         return false;
     }
 }
+
