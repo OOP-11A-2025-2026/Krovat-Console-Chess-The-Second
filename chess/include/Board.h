@@ -62,6 +62,7 @@ public:
     std::string toString();
     Piece* getPiece(Coordinates coords);
     bool isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);
+    void reset();
 };
 
 #endif

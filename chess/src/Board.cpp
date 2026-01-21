@@ -111,7 +111,9 @@ void Board::verifyCoordinates(Coordinates coords) {
 
 Piece* Board::getPiece(Coordinates coords) {
     verifyCoordinates(coords);
-    return squares[coords.first][coords.second]->copy();
+    if(!squares[coords.first][coords.second])
+        return nullptr;
+    return squares[coords.first][coords.second];
 }
 
 // Check if the king of the specified color is in check
@@ -383,7 +385,7 @@ void Board::enPassant(Coordinates from, Coordinates to) {
 void Board::promotion(Coordinates coords, char choice) {
     verifyCoordinates(coords);
 
-    Pawn* p = dynamic_cast<Pawn*>(getPiece(coords));
+    Pawn* p = dynamic_cast<Pawn*>(squares[coords.first][coords.second]);
     if (!p) return;
 
     // Check if the pawn is on the last rank
@@ -438,7 +440,7 @@ int Board::makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char pro
     verifyCoordinates(from);
     verifyCoordinates(to);
 
-    Piece* moving = getPiece(from);
+    Piece* moving = squares[from.first][from.second];
     if (!moving)
         throw InvalidMove("No piece on starting square");
 
@@ -447,7 +449,7 @@ int Board::makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char pro
         throw InvalidMove("Not your turn");
 
     // Correct color capture validation
-    Piece* target = getPiece(to);
+    Piece* target = squares[to.first][to.second];
     if (target && target->getIsWhite() == isWhiteTurn)
         throw InvalidMove("Cannot capture your own piece");
 
@@ -688,4 +690,39 @@ void Board::castle(Coordinates from, Coordinates to) {
 
     king->setHasKingMoved(true);
     rook->setHasRookMoved(true);
+}
+
+void Board::reset() {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
+            delete squares[i][j];
+            squares[i][j] = nullptr;
+
+            delete undoSquares[i][j];
+            undoSquares[i][j] = nullptr;
+        }
+    }
+
+    undoAvailable = false;
+
+    for(int i = 0; i < BOARD_SIZE; i++) {
+        squares[1][i] = new Pawn(false);
+        squares[6][i] = new Pawn(true);
+    }
+
+    squares[0][0] = new Rook(false);
+    squares[0][7] = new Rook(false);
+    squares[7][0] = new Rook(true);
+    squares[7][7] = new Rook(true);
+
+    squares[0][2] = new Bishop(false);
+    squares[0][5] = new Bishop(false);
+    squares[7][2] = new Bishop(true);
+    squares[7][5] = new Bishop(true);
+
+    squares[0][3] = new Queen(false);
+    squares[7][3] = new Queen(true);
+
+    squares[0][4] = new King(false);
+    squares[7][4] = new King(true);
 }

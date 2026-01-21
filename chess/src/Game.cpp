@@ -135,8 +135,7 @@ void Game::loadGame(string filename) {
     if(!in)
         throw runtime_error("Cannot open file for reading.");
 
-    board.~Board();
-    new (&board) Board();
+    board.reset();
     movesHistory.clear();
     promotionChoice = ' ';
     gameResult = "*";
@@ -163,18 +162,17 @@ void Game::loadGame(string filename) {
 }
 
 void Game::start() {
-    //Start
     cout << "1 - New Game" << endl << "2 - Load Game" << endl << "Choice: ";
     string choice;
     cin >> choice;
-    
+
     bool whiteTurn = true;
 
-    if(choice == "2") {
+    if (choice == "2") {
         cout << "Enter PGN filename to load: ";
         string filename;
         cin >> filename;
-        if(filename.empty()) {
+        if (filename.empty()) {
             cout << "No filename provided." << endl;
             return;
         }
@@ -187,17 +185,15 @@ void Game::start() {
             return;
         }
     }
-
-    else if(choice != "1") {
+    else if (choice != "1") {
         cout << "Invalid choice." << endl;
         return;
     }
 
-    //Main Game Loop
-    while(true) {
+    while (true) {
         cout << board.toString() << endl;
 
-        if(gameResult != "*") {
+        if (gameResult != "*") {
             cout << "The game is already finished: " << gameResult << endl;
             break;
         }
@@ -208,27 +204,27 @@ void Game::start() {
         string input;
         cin >> input;
 
-        //Save
-        if(input == "3") {
+        // Save game
+        if (input == "3") {
             cout << "Enter filename (e.g. game.pgn): ";
             string filename;
             cin >> filename;
-            if(filename.empty())
-                filename = "game.pgn";
+            if (filename.empty()) filename = "game.pgn";
             try {
                 saveGame(filename);
+                cout << "Game saved to " << filename << endl;
             } catch (exception& e) {
                 cout << "Save failed: " << e.what() << endl;
             }
             continue;
         }
 
-        //Draw
-        if(input == "4") {
+        // Offer draw
+        if (input == "4") {
             cout << "Opponent, do you accept the draw? (y/n): ";
             string response;
             cin >> response;
-            if(response == "y" || response == "Y") {
+            if (response == "y" || response == "Y") {
                 cout << "Game drawn by agreement." << endl;
                 break;
             } else {
@@ -237,54 +233,56 @@ void Game::start() {
             }
         }
 
-        //Resign
-        if(input == "5") {
-            cout << (whiteTurn ? "White" : "Black") << " resigns" << endl;
+        // Resign
+        if (input == "5") {
+            cout << (whiteTurn ? "White" : "Black") << " resigns." << endl;
             cout << (whiteTurn ? "Black" : "White") << " wins!" << endl;
             break;
         }
 
-        //Move
-        if(input == "1") {
-            cout << "Enter move (e.g. e4, Nf3, O-O): ";
-            string enteredMove;
-            cin >> enteredMove;
-        }
-
-        //Undo
-        if(input == "2") {
-            board.undoMove();
-            whiteTurn = !whiteTurn;
+        // Undo
+        if (input == "2") {
+            try {
+                board.undoMove();
+                whiteTurn = !whiteTurn;
+            } catch (InvalidMove& e) {
+                cout << "Undo failed: " << e.what() << endl;
+            }
             continue;
         }
 
-        try {
-            pair<Coordinates, Coordinates> move = interpretMove(input, whiteTurn);
-            Coordinates from = move.first;
-            Coordinates to = move.second;
+        // Move
+        if (input == "1") {
+            cout << "Enter move (e.g. e4, Nf3, O-O): ";
+            string moveStr;
+            cin >> moveStr;
 
-            int result = board.makeMove(from, to, whiteTurn, promotionChoice);
-            promotionChoice = ' ';
-            movesHistory.push_back(input);
+            try {
+                auto [from, to] = interpretMove(moveStr, whiteTurn);
+                int result = board.makeMove(from, to, whiteTurn, promotionChoice);
+                movesHistory.push_back(moveStr);
+                promotionChoice = ' ';
 
-            if(result == 1) {
-                cout << board.toString() << endl;
-                cout << "CHECKMATE" << endl;
-                cout << (whiteTurn ? "White" : "Black") << " wins." << endl;
-                break;
+                if (result == CHECKMATE) {
+                    cout << board.toString() << endl;
+                    cout << "CHECKMATE! " << (whiteTurn ? "White" : "Black") << " wins." << endl;
+                    break;
+                }
+                if (result == STALEMATE) {
+                    cout << board.toString() << endl;
+                    cout << "STALEMATE! Game drawn." << endl;
+                    break;
+                }
+
+                whiteTurn = !whiteTurn;
+
+            } catch (InvalidMove& e) {
+                cout << "Invalid move: " << e.what() << endl;
             }
-
-            if(result == 2) {
-                cout << board.toString() << endl;
-                cout << "STALEMATE" << endl;
-                cout << "Game drawn" << endl;
-                break;
-            }
-
-            whiteTurn = !whiteTurn;
-
-        } catch (InvalidMove& e) {
-            cout << "Invalid Move: " << e.what() << endl;
+            continue;
         }
+
+        // If input wasn't recognized
+        cout << "Invalid option. Please choose again." << endl;
     }
 }
