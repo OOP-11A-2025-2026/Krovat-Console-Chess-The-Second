@@ -4,15 +4,15 @@
 // Above is black in lowercase letters, below is white in uppercase letters
 Board::Board() {
     // Initialize an empty board
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
             squares[i][j] = nullptr;
             undoSquares[i][j] = nullptr;
         }
     }
 
     // Pawns
-    for (int j = 0; j < 8; j++) {
+    for (int j = 0; j < BOARD_SIZE; j++) {
         squares[1][j] = new Pawn(false);
         squares[6][j] = new Pawn(true);
     }
@@ -46,8 +46,8 @@ Board::Board() {
 
 // Destructor to clean up dynamically allocated pieces
 Board::~Board() {
-    for (int i = 0; i < 8; i++)
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < BOARD_SIZE; i++)
+        for (int j = 0; j < BOARD_SIZE; j++) {
             delete squares[i][j];
             delete undoSquares[i][j];
         }
@@ -55,9 +55,9 @@ Board::~Board() {
 
 // Save the current board state for undo functionality
 void Board::saveUndoState() {
-    for (int i = 0; i < 8; i++) 
+    for (int i = 0; i < BOARD_SIZE; i++) 
     {
-        for (int j = 0; j < 8; j++) 
+        for (int j = 0; j < BOARD_SIZE; j++) 
         {
             delete undoSquares[i][j]; // Clean up previous undo state
             if (squares[i][j] != nullptr) 
@@ -74,9 +74,9 @@ void Board::undoMove() {
     if (!undoAvailable)
         throw InvalidMove("No move to undo");
 
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < BOARD_SIZE; i++)
     {
-        for (int j = 0; j < 8; j++) 
+        for (int j = 0; j < BOARD_SIZE; j++) 
         {
             delete squares[i][j]; // Clean up current board state
             squares[i][j] = undoSquares[i][j];
@@ -89,9 +89,9 @@ void Board::undoMove() {
 
 // Get the coordinates of the king of the specified color
 Coordinates Board::getKingCoordinates(bool isKingWhite) {
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < BOARD_SIZE; i++)
     {
-        for (int j = 0; j < 8; j++)
+        for (int j = 0; j < BOARD_SIZE; j++)
         {
             if (squares[i][j] != nullptr) 
             {
@@ -104,8 +104,8 @@ Coordinates Board::getKingCoordinates(bool isKingWhite) {
 }
 
 // Verify that the given coordinates are within the bounds of the board
-void verifyCoordinates(Coordinates coords) {
-    if (coords.first < 0 || coords.first >= 8 || coords.second < 0 || coords.second >= 8)
+void Board::verifyCoordinates(Coordinates coords) {
+    if (coords.first < 0 || coords.first >= BOARD_SIZE || coords.second < 0 || coords.second >= BOARD_SIZE)
         throw InvalidMove("Coordinates out of bounds");
 }
 
@@ -124,7 +124,7 @@ bool Board::checkCheck(bool isKingWhite) {
     int row = king.first, col = king.second;
     
     // Checking down - Queens and Rooks
-    for (int i = row + 1; i < 8; i++) 
+    for (int i = row + 1; i < BOARD_SIZE; i++) 
     {
         piece = squares[i][col];
         if (!piece) continue;
@@ -146,7 +146,7 @@ bool Board::checkCheck(bool isKingWhite) {
     }
 
     // Checking right - Queens and Rooks
-    for (int i = col + 1; i < 8; i++) 
+    for (int i = col + 1; i < BOARD_SIZE; i++) 
     {
         piece = squares[row][i];
         if (!piece) continue;
@@ -168,7 +168,7 @@ bool Board::checkCheck(bool isKingWhite) {
     }
 
     // Checking down right diagonal - Queens and Bishops
-    for (int i = 1; row + i < 8 && col + i < 8; i++) 
+    for (int i = 1; row + i < BOARD_SIZE && col + i < BOARD_SIZE; i++) 
     {
         piece = squares[row + i][col + i];
         if (!piece) continue;
@@ -179,7 +179,7 @@ bool Board::checkCheck(bool isKingWhite) {
     }
 
     // Checking down left diagonal - Queens and Bishops
-    for (int i = 1; row + i < 8 && col - i >= 0; i++) 
+    for (int i = 1; row + i < BOARD_SIZE && col - i >= 0; i++) 
     {
         piece = squares[row + i][col - i];
         if (!piece) continue;
@@ -190,7 +190,7 @@ bool Board::checkCheck(bool isKingWhite) {
     }
 
     // Checking up right diagonal - Queens and Bishops
-    for (int i = 1; row - i >= 0 && col + i < 8; i++) 
+    for (int i = 1; row - i >= 0 && col + i < BOARD_SIZE; i++) 
     {
         piece = squares[row - i][col + i];
         if (!piece) continue;
@@ -216,7 +216,7 @@ bool Board::checkCheck(bool isKingWhite) {
     {
         int nrow = row + knightMove[0], ncol = col + knightMove[1];
         
-        if (nrow < 0 || nrow >= 8 || ncol < 0 || ncol >= 8) continue;
+        if (nrow < 0 || nrow >= BOARD_SIZE || ncol < 0 || ncol >= BOARD_SIZE) continue;
         
         piece = squares[nrow][ncol];
         if (piece && dynamic_cast<Knight*>(piece) && piece->getIsWhite() == opponentIsWhite)
@@ -226,7 +226,7 @@ bool Board::checkCheck(bool isKingWhite) {
     // Pawn checks
     int opponentPawnDirection = isKingWhite ? -1 : 1; // Black pawns move down (small index), white pawns move up (big index)
     int prow = row + opponentPawnDirection;
-    if (prow >= 0 && prow < 8) 
+    if (prow >= 0 && prow < BOARD_SIZE) 
     {
         
         int pLeftCol = col - 1;
@@ -239,7 +239,7 @@ bool Board::checkCheck(bool isKingWhite) {
                 return true;
         }
 
-        if(pRightCol < 8) 
+        if(pRightCol < BOARD_SIZE) 
         {
             piece = squares[prow][pRightCol];
             if (piece && dynamic_cast<Pawn*>(piece) && piece->getIsWhite() == opponentIsWhite)
@@ -257,7 +257,7 @@ bool Board::checkCheck(bool isKingWhite) {
             int krow = row + dr;
             int kcol = col + dc;
 
-            if (krow < 0 || krow >= 8 || kcol < 0 || kcol >= 8) continue;
+            if (krow < 0 || krow >= BOARD_SIZE || kcol < 0 || kcol >= BOARD_SIZE) continue;
 
             piece = squares[krow][kcol];
             if (piece && dynamic_cast<King*>(piece) && piece->getIsWhite() != isKingWhite)
@@ -320,10 +320,10 @@ std::string Board::toString() {
     out << "  | a b c d e f g h\n";
     out << "--+----------------\n";
 
-    for (int i = 0; i < 8; i++) 
+    for (int i = 0; i < BOARD_SIZE; i++) 
     {
-        out << 8 - i << " | ";
-        for (int j = 0; j < 8; j++) 
+        out << BOARD_SIZE - i << " | ";
+        for (int j = 0; j < BOARD_SIZE; j++) 
         {
             if (!squares[i][j]) 
                 out << ((i % 2 == j % 2) ? "* " : ". ");
@@ -336,8 +336,8 @@ std::string Board::toString() {
 }
 
 void Board::resetAllEnPassantEligibility() {
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 8; j++) {
+    for (int i = 0; i < BOARD_SIZE; i++) {
+        for (int j = 0; j < BOARD_SIZE; j++) {
             Pawn* p = dynamic_cast<Pawn*>(squares[i][j]);
             if (p) p->setEnPassantEligible(false);
         }
@@ -385,6 +385,10 @@ void Board::promotion(Coordinates coords, char choice) {
 
     Pawn* p = dynamic_cast<Pawn*>(getPiece(coords));
     if (!p) return;
+
+    // Check if the pawn is on the last rank
+    if ((p->getIsWhite() && coords.first != 0) || (!p->getIsWhite() && coords.first != 7))
+        return;
 
     bool w = p->getIsWhite();
     Piece* n = nullptr;
@@ -529,16 +533,16 @@ int Board::makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char pro
     bool opponentIsWhite = !moving->getIsWhite();
 
     if (checkMate(opponentIsWhite)) {
-        return 1;   // checkmate
+        return CHECKMATE;
     }
     else if (checkStalemate(opponentIsWhite)) {
-        return 2;   // stalemate
+        return STALEMATE;
     }
     else if (checkCheck(opponentIsWhite)) {
-        return 3;   // check
+        return CHECK;
     }
 
-    return 0; // normal move
+    return NORMAL;
 }
 
 bool Board::isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice) {
@@ -556,8 +560,8 @@ bool Board::isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char
 }
 
 bool Board::hasValidMoves(bool isKingWhite) {
-    for(int fromFst = 0; fromFst < 8; fromFst++) {
-        for(int fromSnd = 0; fromSnd < 8; fromSnd++) {
+    for(int fromFst = 0; fromFst < BOARD_SIZE; fromFst++) {
+        for(int fromSnd = 0; fromSnd < BOARD_SIZE; fromSnd++) {
             Piece* p = squares[fromFst][fromSnd];
 
             if(p == nullptr || p->getIsWhite() != isKingWhite)
@@ -566,8 +570,8 @@ bool Board::hasValidMoves(bool isKingWhite) {
             Coordinates from;
             from.first = fromFst;
             from.second = fromSnd;
-            for(int toFst; toFst < 8; toFst++) {
-                for(int toSnd; toSnd < 8; toSnd++) {
+            for(int toFst = 0; toFst < BOARD_SIZE; toFst++) {
+                for(int toSnd = 0; toSnd < BOARD_SIZE; toSnd++) {
                     if(fromFst == toFst && fromSnd == toSnd)
                         continue;
 
@@ -580,7 +584,7 @@ bool Board::hasValidMoves(bool isKingWhite) {
 
                     Piece* target = squares[toFst][toSnd];
 
-                    if(target == nullptr || target->getIsWhite() != isKingWhite)
+                    if(target != nullptr && target->getIsWhite() == isKingWhite)
                         continue;
 
                     if(dynamic_cast<Pawn*>(p) != nullptr) {
@@ -593,7 +597,7 @@ bool Board::hasValidMoves(bool isKingWhite) {
                             continue;
                     }
 
-                    if(!(dynamic_cast<Knight*>(p) != nullptr && checkCollision(from, to)))
+                    if(!dynamic_cast<Knight*>(p) && checkCollision(from, to))
                         continue;
 
                     squares[toFst][toSnd] = p;
@@ -619,7 +623,6 @@ bool Board::checkStalemate(bool isKingWhite) {
 bool Board::checkMate(bool isKingWhite) {
     return (!hasValidMoves(isKingWhite) && checkCheck(isKingWhite));
 }
-
 
 bool Board::checkCastle(Coordinates from, Coordinates to) {
     King* king = dynamic_cast<King*>(getPiece(from));

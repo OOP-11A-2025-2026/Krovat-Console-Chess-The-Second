@@ -2,10 +2,11 @@
 #define GAME_H
 
 #include "Board.h"
+#include <vector>
 
 class Game {
 private:
-    // add equivalent to moves array - please do not remove this comment if you don't replese it with the needed code, so we don't forget about it
+    std::vector<std::string> movesHistory;
     char promotionChoice = ' ';
     Board board;
     std::string gameResult = "*";
@@ -14,7 +15,6 @@ private:
     bool matchesPiece(Piece& p, char c);
 
 public:
-    Game();
     void start();
     void saveGame(std::string filename);
     void loadGame(std::string filename);

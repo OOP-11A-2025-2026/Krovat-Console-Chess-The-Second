@@ -17,10 +17,14 @@
 #include <string>
 #include <sstream>
 
+const int BOARD_SIZE = 8;
+
+enum MoveResult { NORMAL = 0, CHECKMATE, STALEMATE, CHECK };
+
 class Board {
 private:
-    Piece* squares[8][8] = {nullptr};
-    Piece* undoSquares[8][8] = {nullptr};
+    Piece* squares[BOARD_SIZE][BOARD_SIZE] = {nullptr};
+    Piece* undoSquares[BOARD_SIZE][BOARD_SIZE] = {nullptr};
 
     bool undoAvailable = false;
 
@@ -29,34 +33,35 @@ private:
         { 1, 2}, { 1,-2}, {-1, 2}, {-1,-2}
     };
     
-    void saveUndoState(); // done, untested
-    Coordinates getKingCoordinates(bool isKingWhite); // done, untested
+    void saveUndoState();
+    void verifyCoordinates(Coordinates coords);
+    Coordinates getKingCoordinates(bool isKingWhite);
     bool checkCastle(Coordinates from, Coordinates to);
     void castle(Coordinates from, Coordinates to);
-    bool checkCollision(Coordinates from, Coordinates to); // done, untested
-    Piece* getPiece(Coordinates coords); // done, untested
-    void resetAllEnPassantEligibility(); // done, untested
-    bool checkEnPassant(Coordinates from, Coordinates to); // done, untested
-    void enPassant(Coordinates from, Coordinates to); // done, untested
-    void promotion(Coordinates coords, char promotionChoice); // done, untested
-    void checkPin(Coordinates from, Coordinates to); // done, untested
+    bool checkCollision(Coordinates from, Coordinates to);
+    Piece* getPiece(Coordinates coords);
+    void resetAllEnPassantEligibility();
+    bool checkEnPassant(Coordinates from, Coordinates to);
+    void enPassant(Coordinates from, Coordinates to);
+    void promotion(Coordinates coords, char promotionChoice);
+    void checkPin(Coordinates from, Coordinates to);
 
 public:
     // To stop accsidental shadow copying
     Board(const Board &other) = delete;
     Board& operator=(const Board &other) = delete;
 
-    Board(); // done, untested
-    ~Board(); // done, untested
+    Board();
+    ~Board();
     
-    void undoMove(); // done, untested
-    bool checkCheck(bool isKingWhite); // done, untested
+    void undoMove();
+    bool checkCheck(bool isKingWhite);
     bool hasValidMoves(bool isKingWhite);
     bool checkMate(bool isKingWhite);
     bool checkStalemate(bool isKingWhite);
     int makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);
-    std::string toString(); // done, untested
-    bool isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);    
+    std::string toString();
+    bool isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);
 };
 
 #endif
