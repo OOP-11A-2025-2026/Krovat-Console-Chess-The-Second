@@ -1,12 +1,14 @@
 #include "../include/Game.h"
 
+using namespace std;
+
 // Converts file/rank to coordinates
-Coordinates parseSquare(char file, char rank) {
+Coordinates Game::parseSquare(char file, char rank) {
     return Coordinates(8 - (rank - '0'), file - 'a');
 }
 
 // Checks if a piece matches a SAN character
-bool matchesPiece(Piece* p, char c) {
+bool Game::matchesPiece(Piece* p, char c) {
     switch (c) 
     {
         case 'P': return dynamic_cast<Pawn*>(p) != nullptr;
@@ -20,12 +22,12 @@ bool matchesPiece(Piece* p, char c) {
 }
 
 // Interprets a move in Standard Algebraic Notation (SAN) and returns the corresponding coordinates
-std::pair<Coordinates, Coordinates> Game::interpretMove(std::string notationRaw, bool whiteTurn) 
+pair<Coordinates, Coordinates> Game::interpretMove(string notationRaw, bool whiteTurn) 
 {
-    std::string notation = notationRaw;
+    string notation = notationRaw;
     // Remove check/mate symbols
-    notation.erase(std::remove(notation.begin(), notation.end(), '+'), notation.end());
-    notation.erase(std::remove(notation.begin(), notation.end(), '#'), notation.end());
+    notation.erase(remove(notation.begin(), notation.end(), '+'), notation.end());
+    notation.erase(remove(notation.begin(), notation.end(), '#'), notation.end());
 
     // Castling
     if (notation == "O-O" || notation == "0-0") 
@@ -40,15 +42,15 @@ std::pair<Coordinates, Coordinates> Game::interpretMove(std::string notationRaw,
     }
 
     // Promotion
-    if (notation.find('=') != std::string::npos) 
+    if (notation.find('=') != string::npos) 
     {
         promotionChoice = notation.back();
         notation = notation.substr(0, notation.find('='));
     }
 
     // Capture
-    bool isCapture = notation.find('x') != std::string::npos;
-    notation.erase(std::remove(notation.begin(), notation.end(), 'x'), notation.end());
+    bool isCapture = notation.find('x') != string::npos;
+    notation.erase(remove(notation.begin(), notation.end(), 'x'), notation.end());
 
     // Destination square
     char file = notation[notation.length() - 2];
@@ -56,7 +58,7 @@ std::pair<Coordinates, Coordinates> Game::interpretMove(std::string notationRaw,
     Coordinates to = parseSquare(file, rank);
 
     // Piece type
-    char pieceChar = std::isupper(notation[0]) ? notation[0] : 'P';
+    char pieceChar = isupper(notation[0]) ? notation[0] : 'P';
 
     // Disambiguation by file or rank
     char disFile = 0;
@@ -65,7 +67,7 @@ std::pair<Coordinates, Coordinates> Game::interpretMove(std::string notationRaw,
     if (notation.length() == 4) 
     {
         char d = notation[1];
-        if (std::isdigit(d)) disRank = d;
+        if (isdigit(d)) disRank = d;
         else disFile = d;
     }
 
@@ -76,7 +78,7 @@ std::pair<Coordinates, Coordinates> Game::interpretMove(std::string notationRaw,
     }
 
     // Find candidate starting squares
-    std::vector<Coordinates> candidates;
+    vector<Coordinates> candidates;
 
     for (int i = 0; i < BOARD_SIZE; i++) {
         for (int j = 0; j < BOARD_SIZE; j++) {
@@ -86,7 +88,7 @@ std::pair<Coordinates, Coordinates> Game::interpretMove(std::string notationRaw,
             // Skipping a square if there isn't a piece on it, if the piece is the wrong type or color
             if (!p) continue;
             if (p->getIsWhite() != whiteTurn) continue;
-            if (!matchesPiece(*p, pieceChar)) continue;
+            if (!matchesPiece(p, pieceChar)) continue;
 
             // Skipping a piece if it does not match the file/rank disambiguation
             if (disFile && j != disFile - 'a') continue;
@@ -112,4 +114,85 @@ std::pair<Coordinates, Coordinates> Game::interpretMove(std::string notationRaw,
     }
 
     return { candidates[0], to };
+}
+
+void Game::saveGame(string filename) {
+    ofstream out(filename);
+    if(!out)
+        throw runtime_error("Cannot open file for writing.");
+
+    for(size_t i = 0; i < movesHistory.size(); i++) {
+        out << movesHistory[i];
+        if(i + 1 < movesHistory.size())
+            out << ' ';
+    }
+
+    out << endl << gameResult << endl;
+}
+
+void Game::loadGame(string filename) {
+    ifstream in(filename);
+    if(!in)
+        throw runtime_error("Cannot open file for reading.");
+
+    board.~Board();
+    new (&board) Board();
+    movesHistory.clear();
+    promotionChoice = ' ';
+    gameResult = "*";
+
+    string movesLine;
+    getline(in, movesLine);
+
+    stringstream ss(movesLine);
+    string move;
+    bool whiteTurn = true;
+
+    while (ss >> move) {
+        auto [from, to] = interpretMove(move, whiteTurn);
+
+        board.makeMove(from, to, whiteTurn, promotionChoice);
+        movesHistory.push_back(move);
+
+        promotionChoice = ' ';
+        whiteTurn = !whiteTurn;
+    }
+
+    if (!getline(in, gameResult))
+        gameResult = "*";
+}
+
+void Game::start() {
+    cout << "1 - New Game" << endl << "2 - Load Game" << endl << "Choice: ";
+    string choice;
+    cin >> choice;
+    
+    bool whiteTurn = true;
+
+    if(choice == "2") {
+        cout << "Enter PGN filename to load :";
+        string filename;
+        cin >> filename;
+        if(filename.empty()) {
+            cout << "No filename provided." << endl;
+            return;
+        }
+        try {
+            loadGame(filename);
+            whiteTurn = (movesHistory.size() % 2 == 0);
+            cout << "Game loaded." << endl;
+        } catch (exception& e) {
+            cout << "Load failed: " << e.what() << endl;
+            return;
+        }
+    }
+
+    else if(choice != "1") {
+        cout << "Invalid choice." << endl;
+        return;
+    }
+
+    while(true) {
+        
+    }
 }

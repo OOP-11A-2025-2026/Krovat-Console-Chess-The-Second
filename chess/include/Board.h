@@ -46,7 +46,7 @@ private:
     void checkPin(Coordinates from, Coordinates to);
 
 public:
-    // To stop accsidental shadow copying
+    // To stop accidental shadow copying
     Board(const Board &other) = delete;
     Board& operator=(const Board &other) = delete;
 
