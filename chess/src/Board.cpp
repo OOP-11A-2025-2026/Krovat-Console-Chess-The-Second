@@ -555,3 +555,67 @@ bool Board::isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char
     }
 }
 
+bool Board::hasValidMoves(bool isKingWhite) {
+    for(int fromFst = 0; fromFst < 8; fromFst++) {
+        for(int fromSnd = 0; fromSnd < 8; fromSnd++) {
+            Piece* p = squares[fromFst][fromSnd];
+
+            if(p == nullptr || p->getIsWhite() != isKingWhite)
+                continue;
+
+            Coordinates from;
+            from.first = fromFst;
+            from.second = fromSnd;
+            for(int toFst; toFst < 8; toFst++) {
+                for(int toSnd; toSnd < 8; toSnd++) {
+                    if(fromFst == toFst && fromSnd == toSnd)
+                        continue;
+
+                    Coordinates to;
+                    to.first = toFst;
+                    to.second = toSnd;
+
+                    if(!p->regularMovement(from, to))
+                        continue;
+
+                    Piece* target = squares[toFst][toSnd];
+
+                    if(target == nullptr || target->getIsWhite() != isKingWhite)
+                        continue;
+
+                    if(dynamic_cast<Pawn*>(p) != nullptr) {
+                        int colDiff = abs(toSnd - fromSnd);
+
+                        if (colDiff == 1 && target == nullptr)
+                            continue;
+
+                        if (colDiff == 0 && target != nullptr)
+                            continue;
+                    }
+
+                    if(!(dynamic_cast<Knight*>(p) != nullptr && checkCollision(from, to)))
+                        continue;
+
+                    squares[toFst][toSnd] = p;
+                    squares[fromFst][fromSnd] = nullptr;
+
+                    bool kingInCheck = checkCheck(isKingWhite);
+
+                    squares[fromFst][fromSnd] = p;
+                    squares[toFst][toSnd] = target;
+
+                    if(!kingInCheck) return true;
+                }
+            }
+        }
+    }
+    return false;
+}
+
+bool Board::checkStalemate(bool isKingWhite) {
+    return (!hasValidMoves(isKingWhite) && !checkCheck(isKingWhite));
+}
+
+bool Board::checkMate(bool isKingWhite) {
+    return (!hasValidMoves(isKingWhite) && checkCheck(isKingWhite));
+}
