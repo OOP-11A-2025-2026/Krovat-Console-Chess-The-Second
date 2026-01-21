@@ -39,7 +39,6 @@ private:
     bool checkCastle(Coordinates from, Coordinates to);
     void castle(Coordinates from, Coordinates to);
     bool checkCollision(Coordinates from, Coordinates to);
-    Piece* getPiece(Coordinates coords);
     void resetAllEnPassantEligibility();
     bool checkEnPassant(Coordinates from, Coordinates to);
     void enPassant(Coordinates from, Coordinates to);
@@ -61,6 +60,7 @@ public:
     bool checkStalemate(bool isKingWhite);
     int makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);
     std::string toString();
+    Piece* getPiece(Coordinates coords);
     bool isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice);
 };
 

@@ -18,7 +18,7 @@ public:
     void start();
     void saveGame(std::string filename);
     void loadGame(std::string filename);
-    Coordinates interpretMove(std::string notation, bool whiteTurn);
+    std::pair<Coordinates, Coordinates> interpretMove(std::string notationRaw, bool whiteTurn);
 };
 
 #endif
