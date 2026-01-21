@@ -31,5 +31,12 @@ test_bishop:
 	src/Bishop.cpp \
 	-o test_bishop
 
+test_knight:
+	$(CXX) $(CXXFLAGS) \
+	tests/test_knight.cpp \
+	src/Piece.cpp \
+	src/Knight.cpp \
+	-o test_knight
+
 clean:
 	rm -f $(TARGET)
