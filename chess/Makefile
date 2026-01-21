@@ -24,5 +24,12 @@ SRC = main.cpp \
 all:
 	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) 
 
+test_bishop:
+	$(CXX) $(CXXFLAGS) \
+	tests/test_bishop.cpp \
+	src/Piece.cpp \
+	src/Bishop.cpp \
+	-o test_bishop
+
 clean:
 	rm -f $(TARGET)
