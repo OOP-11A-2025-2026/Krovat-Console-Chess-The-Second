@@ -15,10 +15,10 @@ public:
     bool regularMovement(Coordinates from, Coordinates to) override;
     
     // Accessors
-    bool getHasPawnMoved() const { return hasPawnMoved; }
-    void setHasPawnMoved(bool moved) { hasPawnMoved = moved; }
-    bool isEnPassantEligible() const { return enPassantEligible; }
-    void setEnPassantEligible(bool eligible) { enPassantEligible = eligible; }
+    bool getHasPawnMoved() const;
+    void setHasPawnMoved(bool moved);
+    bool isEnPassantEligible()  const;
+    void setEnPassantEligible(bool eligible);
 
     virtual ~Pawn() = default;
 

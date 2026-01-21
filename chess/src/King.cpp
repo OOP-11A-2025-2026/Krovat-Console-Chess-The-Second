@@ -22,7 +22,7 @@ bool King::regularMovement(Coordinates from, Coordinates to) {
     if(isWithinBoard(to)) {
             usint dx = abs(toFst - fromFst);
             usint dy = abs(toSnd - fromSnd);
-            return (dx <= 1 && dy <= 1 || dx * dy == 1);
+            return (dx <= 1 && dy <= 1);
         }
     return false;
 }

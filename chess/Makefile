@@ -38,5 +38,19 @@ test_knight:
 	src/Knight.cpp \
 	-o test_knight
 
+test_king:
+	$(CXX) $(CXXFLAGS) \
+	tests/test_king.cpp \
+	src/Piece.cpp \
+	src/King.cpp \
+	-o test_king
+
+test_pawn:
+	$(CXX) $(CXXFLAGS) \
+	tests/test_pawn.cpp \
+	src/Piece.cpp \
+	src/Pawn.cpp \
+	-o test_pawn
+
 clean:
 	rm -f $(TARGET)
