@@ -74,5 +74,18 @@ test_queen:
 	src/Queen.cpp \
 	-o test_queen
 
+test_board:
+	$(CXX) $(CXXFLAGS) \
+	tests/test_board.cpp \
+	src/Board.cpp \
+    src/Piece.cpp \
+    src/Pawn.cpp \
+	src/Rook.cpp \
+    src/Knight.cpp \
+    src/Bishop.cpp \
+    src/Queen.cpp \
+    src/King.cpp \
+	-o test_board
+
 clean:
 	rm -f $(TARGET) $(TESTS)

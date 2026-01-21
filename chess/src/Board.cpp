@@ -111,7 +111,7 @@ void Board::verifyCoordinates(Coordinates coords) {
 
 Piece* Board::getPiece(Coordinates coords) {
     verifyCoordinates(coords);
-    return squares[coords.first][coords.second];
+    return squares[coords.first][coords.second]->copy();
 }
 
 // Check if the king of the specified color is in check
