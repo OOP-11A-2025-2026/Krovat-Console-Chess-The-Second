@@ -16,6 +16,9 @@ bool Pawn::regularMovement(Coordinates from, Coordinates to) {
     int rowDiff = (int)to.first - (int)from.first;
     int colDiff = (int)to.second - (int)from.second;
 
+    if(from.first == to.first && from.second == to.second)
+        throw std::invalid_argument("Invalid coordinates. The coordinates must not be the same");
+
     if(!isWithinBoard(to)) return false;
 
     if (colDiff == 0 && rowDiff == direction) return true;

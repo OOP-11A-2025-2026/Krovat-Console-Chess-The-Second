@@ -4,6 +4,31 @@
 
 #include "../include/King.h"
 
+void test_initialization() {
+    King whiteKing(true);
+    King blackKing(false);
+
+    assert(whiteKing.getIsWhite() == true);
+    assert(whiteKing.getSymbol() == 'K');
+    assert(whiteKing.getHasKingMoved() == false);
+
+    assert(blackKing.getIsWhite() == false);
+    assert(blackKing.getSymbol() == 'k');
+    assert(blackKing.getHasKingMoved() == false);
+}
+
+void test_copy() {
+    King original(true);
+    original.setHasKingMoved(true);
+    King* copy = static_cast<King*>(original.copy());
+
+    assert(copy->getIsWhite() == original.getIsWhite());
+    assert(copy->getSymbol() == original.getSymbol());
+    assert(copy->getHasKingMoved() == original.getHasKingMoved());
+
+    delete copy;
+}
+
 void test_valid_king_moves() {
     King k(true);
     Coordinates from{4, 4};
@@ -68,6 +93,8 @@ void test_has_moved_flag() {
 }
 
 int main() {
+    test_initialization();
+    test_copy();
     test_valid_king_moves();
     test_invalid_king_moves();
     test_same_square_throws();

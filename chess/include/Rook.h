@@ -13,7 +13,7 @@ public:
 
     bool regularMovement(Coordinates from, Coordinates to) override;
 
-    bool getHasRookMoved();
+    bool getHasRookMoved() const;
 
     void setHasRookMoved(bool moved);
 

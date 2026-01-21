@@ -2,7 +2,7 @@
 
 using namespace std;
 
-King::King(bool isWhite) : Piece::Piece(isWhite, isWhite ? 'K' : 'k') {}
+King::King(bool isWhite) : Piece::Piece(isWhite, isWhite ? 'K' : 'k'), hasKingMoved(false) {}
 
 King::King(const King &other) : Piece::Piece(other), hasKingMoved(other.hasKingMoved) {}
 
@@ -27,7 +27,7 @@ bool King::regularMovement(Coordinates from, Coordinates to) {
     return false;
 }
 
-bool King::getHasKingMoved() {
+bool King::getHasKingMoved() const {
     return hasKingMoved;
 }
 

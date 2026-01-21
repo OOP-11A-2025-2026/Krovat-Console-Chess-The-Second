@@ -4,6 +4,27 @@
 
 #include "../include/Knight.h"
 
+void test_initialization() {
+    Knight whiteKnight(true);
+    Knight blackKnight(false);
+
+    assert(whiteKnight.getIsWhite() == true);
+    assert(whiteKnight.getSymbol() == 'N');
+
+    assert(blackKnight.getIsWhite() == false);
+    assert(blackKnight.getSymbol() == 'n');
+}
+
+void test_copy() {
+    Knight original(true);
+    Knight* copy = static_cast<Knight*>(original.copy());
+
+    assert(copy->getIsWhite() == original.getIsWhite());
+    assert(copy->getSymbol() == original.getSymbol());
+
+    delete copy;
+}
+
 void test_valid_knight_moves() {
     Knight k(true);
 
@@ -59,6 +80,8 @@ void test_out_of_bounds() {
 }
 
 int main() {
+    test_initialization();
+    test_copy();
     test_valid_knight_moves();
     test_invalid_knight_moves();
     test_same_square_throws();

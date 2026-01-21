@@ -15,7 +15,7 @@ public:
 
     virtual ~King() = default;
 
-    bool getHasKingMoved();
+    bool getHasKingMoved() const;
 
     void setHasKingMoved(bool moved);
 

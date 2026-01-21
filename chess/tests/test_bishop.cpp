@@ -4,24 +4,28 @@
 
 #include "../include/Bishop.h"
 
-// void test_initialization() {
-//     Bishop whiteBishop(true);
-//     Bishop blackBishop(false);
+void test_initialization() {
+    Bishop whiteBishop(true);
+    Bishop blackBishop(false);
 
-//     assert(whiteBishop.getIsWhite() == true);
-//     assert(whiteBishop.getSymbol() == 'B');
+    assert(whiteBishop.getIsWhite() == true);
+    assert(whiteBishop.getSymbol() == 'B');
 
-//     assert(blackBishop.getIsWhite() == false);
-//     assert(blackBishop.getSymbol() == 'b');
-// }
+    assert(blackBishop.getIsWhite() == false);
+    assert(blackBishop.getSymbol() == 'b');
+}
 
-// void test_copy() {
-//     Bishop original(true);
-//     Bishop copy = original.copy();
+void test_copy() {
+    Bishop original(true);
+    Piece* copyPiece = original.copy();
+    Bishop* copiedBishop = dynamic_cast<Bishop*>(copyPiece);
 
-//     assert(copy.getIsWhite() == original.getIsWhite());
-//     assert(copy.getSymbol() == original.getSymbol());
-// }
+    assert(copiedBishop != nullptr);
+    assert(copiedBishop->getIsWhite() == original.getIsWhite());
+    assert(copiedBishop->getSymbol() == original.getSymbol());
+
+    delete copyPiece;
+}
 
 void test_diagonal_moves() {
     Bishop b(true);
@@ -71,8 +75,8 @@ void test_out_of_bounds() {
 }
 
 int main() {
-    // test_initialization();
-    // test_copy();
+    test_initialization();
+    test_copy();
     test_diagonal_moves();
     test_non_diagonal_moves();
     test_same_square_throws();

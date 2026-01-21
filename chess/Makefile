@@ -21,6 +21,14 @@ SRC = main.cpp \
     src/King.cpp \
 	src/Game.cpp 
 
+TESTS = test_pawn \
+	test_rook \
+	test_queen \
+	test_bishop \
+	test_knight \
+	test_king
+
+
 all:
 	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET) 
 
@@ -52,5 +60,19 @@ test_pawn:
 	src/Pawn.cpp \
 	-o test_pawn
 
+test_rook:
+	$(CXX) $(CXXFLAGS) \
+	tests/test_rook.cpp \
+	src/Piece.cpp \
+	src/Rook.cpp \
+	-o test_rook
+
+test_queen:
+	$(CXX) $(CXXFLAGS) \
+	tests/test_queen.cpp \
+	src/Piece.cpp \
+	src/Queen.cpp \
+	-o test_queen
+
 clean:
-	rm -f $(TARGET)
+	rm -f $(TARGET) $(TESTS)

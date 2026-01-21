@@ -106,7 +106,7 @@ Coordinates Board::getKingCoordinates(bool isKingWhite) {
 // Verify that the given coordinates are within the bounds of the board
 void Board::verifyCoordinates(Coordinates coords) {
     if (coords.first < 0 || coords.first >= BOARD_SIZE || coords.second < 0 || coords.second >= BOARD_SIZE)
-        throw InvalidMove("Coordinates out of bounds");
+        throw std::invalid_argument("Coordinates out of bounds");
 }
 
 Piece* Board::getPiece(Coordinates coords) {

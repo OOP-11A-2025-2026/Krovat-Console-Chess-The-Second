@@ -3,6 +3,34 @@
 
 #include "../include/Pawn.h"
 
+void test_initialization() {
+    Pawn p1(true);
+    assert(p1.getIsWhite() == true);
+    assert(p1.getSymbol() == 'P');
+    assert(!p1.getHasPawnMoved());
+    assert(!p1.isEnPassantEligible());
+
+    Pawn p2(false);
+    assert(p2.getIsWhite() == false);
+    assert(p2.getSymbol() == 'p');
+    assert(!p2.getHasPawnMoved());
+    assert(!p2.isEnPassantEligible());
+}
+
+void test_copy() {
+    Pawn original(true);
+    original.setHasPawnMoved(true);
+    original.setEnPassantEligible(true);
+    Pawn* copy = static_cast<Pawn*>(original.copy());
+
+    assert(copy->getIsWhite() == original.getIsWhite());
+    assert(copy->getSymbol() == original.getSymbol());
+    assert(copy->getHasPawnMoved() == original.getHasPawnMoved());
+    assert(copy->isEnPassantEligible() == original.isEnPassantEligible());
+
+    delete copy;
+}
+
 void test_white_pawn_basic_moves() {
     Pawn p(true);
     Coordinates from{6, 4};
@@ -95,14 +123,29 @@ void test_pawn_state_flags() {
     assert(p.isEnPassantEligible());
 }
 
+void test_same_square_throws() {
+    Pawn p(true);
+
+    try {
+        p.regularMovement({6, 4}, {6, 4});
+        assert(false);
+    } catch (const std::invalid_argument&) {
+        assert(true);
+    }
+}
+
 int main() {
+    test_initialization();
+    test_copy();
     test_white_pawn_basic_moves();
     test_white_pawn_invalid_moves();
     test_black_pawn_basic_moves();
+    test_black_pawn_invalid_moves();
     test_diagonal_pawn_moves();
     test_double_move_after_moved_fails();
     test_out_of_bounds_moves();
     test_pawn_state_flags();
+    test_same_square_throws();
 
     std::cout << "Pawn tests passed!\n";
 }
