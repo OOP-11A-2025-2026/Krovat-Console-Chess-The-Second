@@ -24,11 +24,11 @@ public:
 
     virtual ~Piece() = default;
 
-    bool getIsWhite() {
+    bool getIsWhite() const {
         return this->isWhite;
     }
 
-    char getSymbol() {
+    char getSymbol() const {
         return this->symbol;
     }
 

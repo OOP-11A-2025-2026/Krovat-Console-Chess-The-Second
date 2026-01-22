@@ -548,15 +548,13 @@ int Board::makeMove(Coordinates from, Coordinates to, bool isWhiteTurn, char pro
 }
 
 bool Board::isLegalMove(Coordinates from, Coordinates to, bool isWhiteTurn, char promotionChoice) {
-    verifyCoordinates(from);
-    verifyCoordinates(to);
-    
     try {
+        saveUndoState();
         makeMove(from, to, isWhiteTurn, promotionChoice);
         undoMove();
         return true;
-    } catch (const InvalidMove&) {
-        if(undoAvailable) undoMove();
+    } catch (InvalidMove& e) {
+        if (undoAvailable) undoMove();
         return false;
     }
 }

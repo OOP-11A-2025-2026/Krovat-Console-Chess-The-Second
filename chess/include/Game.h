@@ -5,6 +5,7 @@
 #include <vector>
 #include <algorithm>
 #include <fstream>
+#include <regex>
 
 class Game {
 private:
@@ -19,8 +20,9 @@ private:
 public:
     void start();
     void saveGame(std::string filename);
-    void loadGame(std::string filename);
-    std::pair<Coordinates, Coordinates> interpretMove(std::string notationRaw, bool whiteTurn);
+    void loadGame(const std::string& filename);
+    std::pair<Coordinates, Coordinates> interpretMove(const std::string notationRaw, bool whiteTurn, char& promotionChoiceOut);
+    std::vector<std::string> getMovesHistory() const;
 };
 
 #endif
