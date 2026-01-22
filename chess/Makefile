@@ -87,5 +87,19 @@ test_board:
     src/King.cpp \
 	-o test_board
 
+test_game:
+	$(CXX) $(CXXFLAGS) \
+	tests/test_game.cpp \
+	src/Board.cpp \
+	src/Game.cpp \
+    src/Piece.cpp \
+    src/Pawn.cpp \
+	src/Rook.cpp \
+    src/Knight.cpp \
+    src/Bishop.cpp \
+    src/Queen.cpp \
+    src/King.cpp \
+	-o test_game
+
 clean:
 	rm -f $(TARGET) $(TESTS)

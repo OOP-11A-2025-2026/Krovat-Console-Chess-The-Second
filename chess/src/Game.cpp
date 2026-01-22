@@ -116,7 +116,8 @@ void Game::saveGame(string filename) {
             out << ' ';
     }
 
-    out << endl << gameResult << endl;
+    if(gameResult != "*")
+        out << endl << gameResult << endl;
 }
 
 void Game::loadGame(const string& filename) {

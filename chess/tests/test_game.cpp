@@ -22,7 +22,7 @@ void testLoadGame() {
     // We'll create a temporary PGN in memory
     std::string filename = "test.pgn";
     std::ofstream out(filename);
-    out << "1. e4 e5 2. Nf3 Nc6 *\n";
+    out << "1. e4 e5 2. Nf3 Nc6\n";
     out.close();
 
     game.loadGame(filename);
